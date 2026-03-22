@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+
+    <springProfile name="!prod">
+        <!-- Console appender for development -->
+        <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+            <encoder>
+                <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+            </encoder>
+        </appender>
+
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+        </root>
+    </springProfile>
+
+    <springProfile name="prod">
+        <!-- JSON appender for production -->
+        <appender name="JSON" class="ch.qos.logback.core.ConsoleAppender">
+            <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+                <includeMdcKeyName>traceId</includeMdcKeyName>
+                <includeMdcKeyName>spanId</includeMdcKeyName>
+                <includeMdcKeyName>paymentId</includeMdcKeyName>
+                <includeMdcKeyName>orderId</includeMdcKeyName>
+                <includeMdcKeyName>idempotencyKey</includeMdcKeyName>
+                <includeMdcKeyName>operation</includeMdcKeyName>
+                <includeMdcKeyName>customerId</includeMdcKeyName>
+                <includeMdcKeyName>restaurantId</includeMdcKeyName>
+                <customFields>{"service":"order-payment-service"}</customFields>
+            </encoder>
+        </appender>
+
+        <root level="INFO">
+            <appender-ref ref="JSON"/>
+        </root>
+    </springProfile>
+
+    <!-- Logger configuration -->
+    <logger name="com.paymentservice" level="DEBUG"/>
+    <logger name="org.springframework.transaction" level="DEBUG"/>
+    <logger name="org.hibernate.SQL" level="DEBUG"/>
+    <logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="TRACE"/>
+    <logger name="org.flywaydb" level="INFO"/>
+    <logger name="org.apache.kafka" level="WARN"/>
+</configuration>
